@@ -58,4 +58,4 @@ build: ## Build the operator-api-mirror binary
 
 .PHONY: mirror
 mirror: build ## Run the mirrorer
-	go run ./cmd/mirrorer/main.go $(ARGS)
+	go run ./cmd/mirrorer/main.go -gitRepo="github.com/sourcehawk/api-mirrorer" $(ARGS)
