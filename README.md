@@ -1,4 +1,4 @@
-# Operator API Mirror
+# Operator API Mirrorer
 
 This is a small utility that extracts the **public API types** from upstream Kubernetes operators 
 (e.g., OpenTelemetry Operator, ECK) and republishes them as **version-pinned, standalone Go modules**.
@@ -19,7 +19,7 @@ directly often pulls in:
 * Frequent breaking changes as upstream moves fast
 * Non-reproducible builds when upstream bumps its own dependencies
 
-**`operator-api-mirror` fixes this.**
+**`operator-api-mirrorer` fixes this.**
 
 It produces stable, minimal, isolated Go modules containing *only*:
 
@@ -110,14 +110,6 @@ Or, if you’re working directly inside a clone of this repo:
 ```bash
 make build
 ```
-Here is a **fully updated README section** reflecting your **new Cobra CLI with subcommands**:
-
-* `mirrorer mirror` for generating mirrors
-* `mirrorer tag` for tagging versions
-* flags defined **per command**, not globally
-* `--gitRepo` only applies to the **mirror** subcommand
-
-Everything below assumes your binary is called `mirrorer`.
 
 ---
 
@@ -230,22 +222,6 @@ This ensures:
 * consistent Kubernetes versions across all mirrored modules
 * maximum compatibility for downstream controllers
 * no accidental dependency bumps caused by upstream operators
-
----
-
-## 🛠 Development
-
-Update `operators.yaml` to add new operators or bump versions.
-
-You can also automate version bumps using Renovate or GitHub Actions.
-A typical workflow:
-
-* Renovate detects new upstream tags
-* It bumps `currentVersion` in `operators.yaml`
-* GitHub Actions runs the mirror job
-* The mirrored modules are committed and tagged automatically
-
-If you'd like an example GitHub workflow, just ask!
 
 ---
 
