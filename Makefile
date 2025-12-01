@@ -58,7 +58,7 @@ build: ## Build the operator-api-mirror binary
 
 .PHONY: mirror
 mirror: build ## Run the mirrorer
-	./mirrorer -config="operators.yaml" -gitRepo="github.com/sourcehawk/api-mirrorer" -mirrorsPath="./mirrors"
+	./mirrorer mirror --config="operators.yaml" --gitRepo="github.com/sourcehawk/api-mirrorer" --mirrorsPath="./mirrors"
 
 .PHONY: tag
 tag: build ## Run the mirrorer
