@@ -1,4 +1,4 @@
-module github.com/sourcehawk/operator-api-mirrors
+module github.com/sourcehawk/operator-api-mirrorer
 
 go 1.25
 
