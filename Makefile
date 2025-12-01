@@ -43,7 +43,7 @@ vet: ## Run go vet against code.
 	go vet cmd/mirrorer/main.go
 
 .PHONY: lint
-lint: golangci-lint ## Run golangci-lint linter
+lint: ## Run golangci-lint linter
 	golangci-lint run
 
 .PHONY: test
