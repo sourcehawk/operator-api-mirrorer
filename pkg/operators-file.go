@@ -16,3 +16,18 @@ func (op *OperatorsFile) Process(mirrorRootPath string, moduleRoot string, targe
 
 	return nil
 }
+
+func (op *OperatorsFile) Tag(mirrorRootPath string) (int, error) {
+	createdCount := 0
+	for _, op := range op.Operators {
+		created, err := op.Tag(mirrorRootPath)
+		if err != nil {
+			return createdCount, err
+		}
+		if created {
+			createdCount++
+		}
+	}
+
+	return createdCount, nil
+}

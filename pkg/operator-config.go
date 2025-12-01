@@ -44,7 +44,29 @@ type OperatorConfig struct {
 	OverwriteDeps  []Dependency    `yaml:"overwriteDependencies"`
 }
 
-func (o OperatorConfig) Mirror(mirrorRootPath string, moduleRoot string) error {
+func (o OperatorConfig) Tag(mirrorRootPath string) (bool, error) {
+	mirrorRootPathStripped := strings.TrimPrefix(mirrorRootPath, ".")
+	mirrorRootPathStripped = strings.TrimPrefix(mirrorRootPathStripped, "/")
+	tag := fmt.Sprintf("%s/%s/%s", mirrorRootPathStripped, o.Slug, o.CurrentVersion)
+
+	exists, err := tagExists(tag)
+	if err != nil {
+		return false, err
+	}
+	if exists {
+		log.Printf("%s: skipping tag %q because it already exists", o.Slug, tag)
+		return false, nil
+	}
+
+	if err := createTag(tag); err != nil {
+		return false, err
+	}
+
+	log.Printf("%s: tagged %s", o.Slug, tag)
+	return true, nil
+}
+
+func (o OperatorConfig) Mirror(mirrorRootPath string, gitRepo string) error {
 	destDir := o.directory(mirrorRootPath)
 
 	if err := os.RemoveAll(destDir); err != nil {
@@ -74,9 +96,9 @@ func (o OperatorConfig) Mirror(mirrorRootPath string, moduleRoot string) error {
 
 	mirrorRootPathStripped := strings.TrimPrefix(mirrorRootPath, ".")
 	mirrorRootPathStripped = strings.TrimPrefix(mirrorRootPathStripped, "/")
-	modulePath := moduleRoot
+	modulePath := gitRepo
 	if mirrorRootPathStripped != "" {
-		modulePath = fmt.Sprintf("%s/%s", moduleRoot, mirrorRootPathStripped)
+		modulePath = fmt.Sprintf("%s/%s", gitRepo, mirrorRootPathStripped)
 	}
 
 	err = o.rewriteInternalImportsAndCopy(sourceDir, destDir, modulePath)

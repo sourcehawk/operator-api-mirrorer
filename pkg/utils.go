@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"go/parser"
 	"go/token"
@@ -182,4 +184,53 @@ func rewriteImports(apisDir, upstreamModule, mirrorModule string) error {
 		s = strings.ReplaceAll(s, oldPrefix, newPrefix)
 		return os.WriteFile(path, []byte(s), info.Mode())
 	})
+}
+
+func tagExists(tag string) (bool, error) {
+	ref := fmt.Sprintf("refs/tags/%s", tag)
+	cmd := exec.Command("git", "show-ref", "--tags", "--verify", "--quiet", ref)
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+
+	// Exit code 0: tag exists
+	if err == nil {
+		return true, nil
+	}
+
+	var exitErr *exec.ExitError
+	if errors.As(err, &exitErr) {
+		switch exitErr.ExitCode() {
+		case 1:
+			// Exit code 1 from `git show-ref --verify` => ref does NOT exist.
+			// This is the normal "tag not found" case, not an error.
+			return false, nil
+		default:
+			// Other non-zero exit code → real problem.
+			return false, fmt.Errorf(
+				"git show-ref failed for %s (exit=%d, stderr=%q): %w",
+				ref, exitErr.ExitCode(), stderr.String(), err,
+			)
+		}
+	}
+
+	// Non-ExitError (e.g. context canceled, binary missing, etc.)
+	return false, fmt.Errorf(
+		"failed to run git show-ref for %s (stderr=%q): %w",
+		ref, stderr.String(), err,
+	)
+}
+
+func createTag(tag string) error {
+	cmd := exec.Command("git", "tag", tag)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to create git tag %s: %w", tag, err)
+	}
+
+	return nil
 }
