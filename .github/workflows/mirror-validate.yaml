@@ -3,10 +3,10 @@ name: Mirror & Validate APIs (PR)
 on:
   pull_request:
     branches:
-      - main
+      - master
   push:
     branches:
-      - main
+      - master
 
 jobs:
   mirror-and-tag:
