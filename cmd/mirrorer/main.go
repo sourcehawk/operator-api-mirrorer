@@ -14,12 +14,12 @@ func main() {
 	var (
 		operatorsFilePath = "operators.yaml"
 		mirrorRootPath    = "mirrors"
-		moduleRoot        = "github.com/sourcehawk/operator-api-mirror"
+		gitRepo           = "github.com/sourcehawk/operator-api-mirror"
 		mirrorTarget      = ""
 	)
 	flag.StringVar(&operatorsFilePath, "config", operatorsFilePath, "path to operators.yaml")
 	flag.StringVar(&mirrorRootPath, "mirrorsPath", mirrorRootPath, "path to mirroring root directory")
-	flag.StringVar(&moduleRoot, "rootModuleName", moduleRoot, "go module root")
+	flag.StringVar(&gitRepo, "gitRepo", gitRepo, "git repo root")
 	flag.StringVar(&mirrorTarget, "target", mirrorTarget, "optional target (slug) from config file")
 	flag.Parse()
 
@@ -33,7 +33,7 @@ func main() {
 	}
 	log.Printf("%+v", operators)
 
-	err = operators.Process(mirrorRootPath, moduleRoot, mirrorTarget)
+	err = operators.Process(mirrorRootPath, gitRepo, mirrorTarget)
 	if err != nil {
 		log.Fatal(err)
 	}

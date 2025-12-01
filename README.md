@@ -153,11 +153,11 @@ import "github.com/my-org/operator-api-mirror/otel-operator/v0.138.0/apis/v1beta
 The tool accepts several optional flags that let you customize where configuration is read from and where mirror
 modules are written.
 
-| Flag              | Default           | Description                                                                                | Example                                 |
-|-------------------|-------------------|--------------------------------------------------------------------------------------------|-----------------------------------------|
-| `-config`         | `operators.yaml`  | Path to the operators configuration file defining which operators and API paths to mirror. | `operators.yaml`                        |
-| `-mirrorsPath`    | `./mirrors`       | Directory where all mirrored operator modules will be generated.                           | `./generated/mirrors`                   |
-| `-rootModuleName` | *none* (required) | Root Go module path used when creating `module <path>` in each mirrored module.            | `github.com/my-org/operator-api-mirror` |
+| Flag           | Default           | Description                                                                                | Example                                 |
+|----------------|-------------------|--------------------------------------------------------------------------------------------|-----------------------------------------|
+| `-config`      | `operators.yaml`  | Path to the operators configuration file defining which operators and API paths to mirror. | `operators.yaml`                        |
+| `-mirrorsPath` | `./mirrors`       | Directory where all mirrored operator modules will be generated.                           | `./generated/mirrors`                   |
+| `-gitRepo`     | *none* (required) | Git repository root                                                                        | `github.com/my-org/operator-api-mirror` |
 
 Typical full invocation:
 
@@ -165,7 +165,7 @@ Typical full invocation:
 ./api-mirrorer \
   -config ./operators.yaml \
   -mirrorsPath ./mirrors \
-  -rootModuleName github.com/my-org/operator-api-mirror
+  -gitRepo github.com/my-org/operator-api-mirror
 ```
 
 ---
