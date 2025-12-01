@@ -103,38 +103,50 @@ From *another* repo (your own mirror repo) you can install the CLI globally:
 go install github.com/sourcehawk/operator-api-mirrorer/cmd/mirrorer@latest
 ```
 
-This will put an `api-mirrorer` binary in your `$GOBIN` (usually `~/go/bin`).
+This will put a `mirrorer` binary in your `$GOBIN` (usually `~/go/bin`).
 
 Or, if you’re working directly inside a clone of this repo:
 
 ```bash
-go build -o api-mirrorer ./cmd/api-mirrorer
+make build
+```
+Here is a **fully updated README section** reflecting your **new Cobra CLI with subcommands**:
+
+* `mirrorer mirror` for generating mirrors
+* `mirrorer tag` for tagging versions
+* flags defined **per command**, not globally
+* `--gitRepo` only applies to the **mirror** subcommand
+
+Everything below assumes your binary is called `mirrorer`.
+
+---
+
+## Run the mirror process
+
+Mirroring operator APIs is done via the **`mirror`** subcommand.
+
+At minimum, you must specify your Go module prefix via `--gitRepo`.
+This is the base of the module path used when writing the `go.mod` for each mirrored operator version:
+
+```
+module <gitRepo>/mirrors/otel-operator
 ```
 
-### Run the mirror process
-
-At minimum you must tell the tool what your **root module name** is – that’s the prefix used when generating modules like:
-
-```go
-module github.com/my-org/operator-api-mirror/otel-operator/v0.138.0
-```
-
-Example:
+### Example
 
 ```bash
-./api-mirrorer \
-  -rootModuleName github.com/my-org/operator-api-mirror
+./mirrorer mirror --gitRepo="github.com/sourcehawk/operator-api-mirrorer"
 ```
 
-The mirrored modules will appear under:
+This generates mirrored modules under:
 
-```text
+```
 mirrors/<operator>/
 ```
 
-For example:
+Example layout:
 
-```text
+```
 mirrors/
 └── otel-operator/
     ├── apis/
@@ -143,30 +155,61 @@ mirrors/
     └── go.mod
 ```
 
-You can then import from your own repo:
+---
 
-```go
-import "github.com/my-org/operator-api-mirror/otel-operator/v0.138.0/apis/v1beta1"
+## CLI Structure
+
+The tool uses the following **subcommands**:
+
+```
+mirrorer mirror   # generate/update mirrors
+mirrorer tag      # create tags for mirrored operator versions
 ```
 
-### CLI flags
+### `mirror` command flags
 
-The tool accepts several optional flags that let you customize where configuration is read from and where mirror
-modules are written.
+| Flag            | Default          | Description                                                     |
+|-----------------|------------------|-----------------------------------------------------------------|
+| `--config`      | `operators.yaml` | Path to your operator definitions                               |
+| `--mirrorsPath` | `./mirrors`      | Output directory for all generated mirrors                      |
+| `--gitRepo`     | *required*       | Root Go module path (used inside generated module go.mod files) |
+| `--target`      | empty            | Optional operator slug to mirror only that operator             |
 
-| Flag           | Default           | Description                                                                                | Example                                 |
-|----------------|-------------------|--------------------------------------------------------------------------------------------|-----------------------------------------|
-| `-config`      | `operators.yaml`  | Path to the operators configuration file defining which operators and API paths to mirror. | `operators.yaml`                        |
-| `-mirrorsPath` | `./mirrors`       | Directory where all mirrored operator modules will be generated.                           | `./generated/mirrors`                   |
-| `-gitRepo`     | *none* (required) | Git repository root                                                                        | `github.com/my-org/operator-api-mirror` |
-
-Typical full invocation:
+#### Full example
 
 ```bash
-./api-mirrorer \
-  -config ./operators.yaml \
-  -mirrorsPath ./mirrors \
-  -gitRepo github.com/my-org/operator-api-mirror
+./mirrorer mirror \
+  --config ./operators.yaml \
+  --mirrorsPath ./mirrors \
+  --gitRepo github.com/my-org/operator-api-mirror
+```
+
+---
+
+## Tagging mirrored versions
+
+After mirrors have been generated and merged into `main`, you can create lightweight git tags for each defined operator version using:
+
+```bash
+./mirrorer tag \
+  --config ./operators.yaml \
+  --mirrorsPath ./mirrors
+```
+
+This command:
+
+* reads `operators.yaml`
+* finds each operator’s current version
+* creates tags of form:
+
+```
+mirrors/<operator>/<version>
+```
+
+Pushing tags is handled separately (e.g., in CI):
+
+```bash
+git push --tags
 ```
 
 ---

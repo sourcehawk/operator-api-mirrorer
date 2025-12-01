@@ -45,9 +45,13 @@ type OperatorConfig struct {
 }
 
 func (o OperatorConfig) Tag(mirrorRootPath string) (bool, error) {
+	tag := fmt.Sprintf("%s/%s", o.Slug, o.CurrentVersion)
 	mirrorRootPathStripped := strings.TrimPrefix(mirrorRootPath, ".")
 	mirrorRootPathStripped = strings.TrimPrefix(mirrorRootPathStripped, "/")
-	tag := fmt.Sprintf("%s/%s/%s", mirrorRootPathStripped, o.Slug, o.CurrentVersion)
+
+	if mirrorRootPathStripped != "" {
+		tag = fmt.Sprintf("%s/%s/%s", mirrorRootPathStripped, o.Slug, o.CurrentVersion)
+	}
 
 	exists, err := tagExists(tag)
 	if err != nil {
@@ -94,9 +98,9 @@ func (o OperatorConfig) Mirror(mirrorRootPath string, gitRepo string) error {
 		}
 	}
 
+	modulePath := gitRepo
 	mirrorRootPathStripped := strings.TrimPrefix(mirrorRootPath, ".")
 	mirrorRootPathStripped = strings.TrimPrefix(mirrorRootPathStripped, "/")
-	modulePath := gitRepo
 	if mirrorRootPathStripped != "" {
 		modulePath = fmt.Sprintf("%s/%s", gitRepo, mirrorRootPathStripped)
 	}
