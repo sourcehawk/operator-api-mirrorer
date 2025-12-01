@@ -74,7 +74,10 @@ func (o OperatorConfig) Mirror(mirrorRootPath string, moduleRoot string) error {
 
 	mirrorRootPathStripped := strings.TrimPrefix(mirrorRootPath, ".")
 	mirrorRootPathStripped = strings.TrimPrefix(mirrorRootPathStripped, "/")
-	modulePath := fmt.Sprintf("%s/%s", moduleRoot, mirrorRootPathStripped)
+	modulePath := moduleRoot
+	if mirrorRootPathStripped != "" {
+		modulePath = fmt.Sprintf("%s/%s", moduleRoot, mirrorRootPathStripped)
+	}
 
 	err = o.rewriteInternalImportsAndCopy(sourceDir, destDir, modulePath)
 	if err != nil {
