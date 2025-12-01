@@ -94,11 +94,11 @@ func (o OperatorConfig) Mirror(mirrorRootPath string, moduleRoot string) error {
 }
 
 func (o OperatorConfig) directory(mirrorRootPath string) string {
-	return fmt.Sprintf("%s/%s/%s", mirrorRootPath, o.Slug, o.CurrentVersion)
+	return fmt.Sprintf("%s/%s", mirrorRootPath, o.Slug)
 }
 
 func (o OperatorConfig) clone() (string, error) {
-	tmp, err := os.MkdirTemp("", fmt.Sprintf("%s-%s-", o.Slug, o.CurrentVersion))
+	tmp, err := os.MkdirTemp("", fmt.Sprintf("%s-", o.Slug))
 	if err != nil {
 		return "", fmt.Errorf("failed to create temp dir: %w", err)
 	}
@@ -140,7 +140,7 @@ func (o OperatorConfig) rewriteInternalImportsAndCopy(sourceDir, destDir, module
 		return err
 	}
 
-	mirrorModule := fmt.Sprintf("%s/%s/%s", moduleRoot, o.Slug, o.CurrentVersion)
+	mirrorModule := fmt.Sprintf("%s/%s", moduleRoot, o.Slug)
 
 	seenImports := map[string]struct{}{}
 
@@ -178,7 +178,7 @@ func (o OperatorConfig) rewriteInternalImportsAndCopy(sourceDir, destDir, module
 }
 
 func (o OperatorConfig) createGoMod(sourceDir string, destDir string, moduleRoot string) error {
-	mirrorModulePath := fmt.Sprintf("%s/%s/%s", moduleRoot, o.Slug, o.CurrentVersion)
+	mirrorModulePath := fmt.Sprintf("%s/%s", moduleRoot, o.Slug)
 	upstreamGoMod := filepath.Join(sourceDir, o.GoModPath)
 
 	data, err := os.ReadFile(upstreamGoMod)

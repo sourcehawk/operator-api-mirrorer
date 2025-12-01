@@ -47,10 +47,12 @@ For each operator defined in `operators.yaml`, the tool:
 8. Writes the final result to:
 
 ```
-mirrors/<slug>/<version>/
+mirrors/<slug>/
 ```
 
 Each mirrored API version is a fully standalone Go module.
+Upgrading causes an overwrite of the existing mirror, therefore you should create a git tag (mirrors/<slug>/<version>)
+for each mirror you create.
 
 ---
 
@@ -127,7 +129,7 @@ Example:
 The mirrored modules will appear under:
 
 ```text
-mirrors/<operator>/<version>/
+mirrors/<operator>/
 ```
 
 For example:
@@ -135,11 +137,10 @@ For example:
 ```text
 mirrors/
 └── otel-operator/
-    └── v0.138.0/
-        ├── apis/
-        ├── internal/
-        ├── pkg/
-        └── go.mod
+    ├── apis/
+    ├── internal/
+    ├── pkg/
+    └── go.mod
 ```
 
 You can then import from your own repo:
