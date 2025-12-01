@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/goccy/go-yaml"
-	"github.com/sourcehawk/operator-api-mirror/pkg"
+	"github.com/sourcehawk/operator-api-mirrors/pkg"
 )
 
 func main() {
