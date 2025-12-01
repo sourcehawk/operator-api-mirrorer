@@ -19,9 +19,13 @@ func main() {
 	)
 	flag.StringVar(&operatorsFilePath, "config", operatorsFilePath, "path to operators.yaml")
 	flag.StringVar(&mirrorRootPath, "mirrorsPath", mirrorRootPath, "path to mirroring root directory")
-	flag.StringVar(&gitRepo, "gitRepo", gitRepo, "git repo root")
+	flag.StringVar(&gitRepo, "gitRepo", "", "git repo root")
 	flag.StringVar(&mirrorTarget, "target", mirrorTarget, "optional target (slug) from config file")
 	flag.Parse()
+
+	if gitRepo == "" {
+		log.Fatal("--gitRepo is required")
+	}
 
 	if mirrorTarget != "" {
 		log.Printf("Mirroring for target: %s", mirrorTarget)
