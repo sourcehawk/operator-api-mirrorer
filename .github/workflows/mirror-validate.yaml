@@ -1,4 +1,4 @@
-name: Mirror & Validate APIs (PR)
+name: Mirror & Tag
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   mirror-and-tag:
-    name: Mirror APIs on temp branch & discover modules
+    name: test-mirrorer
     runs-on: ubuntu-latest
 
     steps:
